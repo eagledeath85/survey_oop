@@ -32,88 +32,73 @@
     # Questions                 - (Question)
     # lancer questionnaire()    -> None
 
-class Question():
+
+class Question:
     def __init__(self, title:str, possible_answers: tuple, good_answer:str):
         self.title = title
         self.possible_answers = possible_answers
         self.good_answer = good_answer
 
+    def FromData(data):
+        q = Question(data[2], data[0], data[1])
+        return q
 
     def poser_question(self):
-        # titre_question, r1, r2, r3, r4, choix_bonne_reponse
-        choix = self.possible_answers
-        bonne_reponse = self.good_answer
         print("QUESTION")
         print("  " + self.title)
-        for index, choix in enumerate(choix):
+        for index, choix in enumerate(self.possible_answers):
             print("  ", index + 1, "-", choix)
+        print()
+        resultat_response_correcte = False
+        reponse_int = Question.demander_reponse_numerique_utlisateur(1, len(self.possible_answers))
+        if self.possible_answers[reponse_int-1].lower() == self.good_answer.lower():
+            print("Bonne réponse")
+            resultat_response_correcte = True
+        else:
+            print("Mauvaise réponse")
+        print()
+        return resultat_response_correcte
 
 
-def demander_reponse_numerique_utlisateur(min, max):
-    reponse_str = input("Votre réponse (entre " + str(min) + " et " + str(max) + ") :")
-    try:
-        reponse_int = int(reponse_str)
-        if min <= reponse_int <= max:
-            return reponse_int
-
-        print("ERREUR : Vous devez rentrer un nombre entre", min, "et", max)
-    except:
-        print("ERREUR : Veuillez rentrer uniquement des chiffres")
-    return demander_reponse_numerique_utlisateur(min, max)
+    def demander_reponse_numerique_utlisateur(min, max) -> int:
+        reponse_str = input("Votre réponse (entre " + str(min) + " et " + str(max) + ") :")
+        try:
+            reponse_int = int(reponse_str)
+            if min <= reponse_int <= max:
+                return reponse_int
+            print("ERREUR : Vous devez rentrer un nombre entre", min, "et", max)
+        except:
+            print("ERREUR : Veuillez rentrer uniquement des chiffres")
+        return Question.demander_reponse_numerique_utlisateur(min, max)
     
 
-'''
-titre = question[0]
-choix = question[1]
-bonne_reponse = question[2]
-'''
-def poser_question(question):
-    # titre_question, r1, r2, r3, r4, choix_bonne_reponse
-    choix = question[1]
-    bonne_reponse = question[2]
-    print("QUESTION")
-    print("  " + question[0])
-    for i in range(len(choix)):
-        print("  ", i+1, "-", choix[i])
+class Questionnaire:
 
-    print()
-    resultat_response_correcte = False
-    reponse_int = demander_reponse_numerique_utlisateur(1, len(choix))
-    if choix[reponse_int-1].lower() == bonne_reponse.lower():
-        print("Bonne réponse")
-        resultat_response_correcte = True
-    else:
-        print("Mauvaise réponse")
-        
-    print()
-    return resultat_response_correcte
+    def __init__(self, questions):
+        self.questions = questions
+
+    def lancer_questionnaire(self):
+        score = 0
+        for question in self.questions:
+            if question.poser_question():
+                score += 1
+        print("Score final :", score, "sur", len(self.questions))
 
 
-'''
-    questionnaire[]
-        question
-            titre = "Quelle est la capitale de la France ?"
-            reponses = ("Marseille", "Nice", "Paris", "Nantes")
-            bonne_reponse = "Paris"
+questions = (
+            Question("Quelle est la capitale de la France ?", ("Marseille", "Nice", "Paris", "Nantes", "Lille"), "Paris"),
+            Question("Quelle est la capitale de l'Italie ?", ("Rome", "Venise", "Pise", "Florence"), "Rome"),
+            Question("Quelle est la capitale de la Belgique ?", ("Anvers", "Bruxelles", "Bruges", "Liège"), "Bruxelles"),
+            )
 
-'''
+questionnaire = Questionnaire(questions)
+questionnaire.lancer_questionnaire()
 
-def lancer_questionnaire(questionnaire):
-    score = 0
-    for question in questionnaire:
-        if poser_question(question):
-            score += 1
-    print("Score final :", score, "sur", len(questionnaire))
-
-"""questionnaire = (
-    ("Quelle est la capitale de la France ?", ("Marseille", "Nice", "Paris", "Nantes", "Lille"), "Paris"), 
-    ("Quelle est la capitale de l'Italie ?", ("Rome", "Venise", "Pise", "Florence"), "Rome"),
-    ("Quelle est la capitale de la Belgique ?", ("Anvers", "Bruxelles", "Bruges", "Liège"), "Bruxelles")
-                )
-
-lancer_questionnaire(questionnaire)"""
-
-q1 = Question("Quelle est la capitale de la France ?", ("Marseille", "Nice", "Paris", "Nantes", "Lille"), "Paris")
-q1.poser_question()
+# Il existe une fonction de classe particuliere permettant de creer des objects meme si l'ordre des parametres n'est pas le bon
+# Cette fonction se nomme FromData()
+# Elle peut etre utilisee si par exemple on veut lire des donnees venant d'une source externe
+data = (("Marseille", "Nice", "Paris", "Nantes", "Lille"), "Paris", "Quelle est la capitale de la France ?")
+q = Question.FromData(data)
+q.poser_question()
 
 
