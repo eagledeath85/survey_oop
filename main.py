@@ -45,8 +45,8 @@ class Question():
         bonne_reponse = self.good_answer
         print("QUESTION")
         print("  " + self.title)
-        for i in len(choix):
-            print("  ", i + 1, "-", choix[i])
+        for index, choix in enumerate(choix):
+            print("  ", index + 1, "-", choix)
 
 
 def demander_reponse_numerique_utlisateur(min, max):
